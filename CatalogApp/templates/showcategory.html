@@ -1,0 +1,59 @@
+<!--
+	showcatagory.py
+	individual category screen template for "Item Catalog" Project
+	written by J K Thomson, 24 January 2019
+-->
+{% extends "layout.html" %}
+
+{% block back %}
+<div class="back-arrow">
+    <a href="{{url_for('showOrchestra')}}"> < Home</a>
+</div>
+{% endblock %}
+
+{% block main %}
+<nav>
+	<h2>Orchestra Sections</h2>
+	<ul>
+		{% if categories %}
+			{% for c in categories %}
+				<li>
+					{% if c.id == category.id %}
+						<a class="selected" href="{{url_for( 'showCategory', category_id=c.id)}}">{{c.name}}</a>
+					{% else %}
+						<a href="{{url_for( 'showCategory', category_id=c.id)}}">{{c.name}}</a>
+					{% endif %}
+				</li>
+			{% endfor %}
+		{% else %}
+			<li>No categories in list!</li>
+		{% endif %}
+	</ul>
+</nav>
+
+<article>
+	<div>
+		<h3>The {{category.name}} Section</h3>
+		<p>{{category.description}}</p>
+	</div>
+
+	<h3>Instruments in the {{category.name}} Section</h3>
+	<ul>
+		{% if instruments %}
+			{% for i in instruments %}
+				<li>
+					<a href="{{url_for( 'showInstrument', category_id=i.category_id, instrument_id=i.id)}}">{{i.name}}</a>
+				</li>
+			{% endfor %}
+		{% else %}
+			<li>No instruments in list!</li>
+		{% endif %}
+	</ul>
+
+    {% if user_email %}
+	<a href="{{url_for('newInstrument', category_id=category_id)}}"> Add a new instrument </a>
+    {% endif %}
+
+</article>
+
+{% endblock %}

@@ -1,0 +1,223 @@
+@charset "utf-8";
+/* style.css
+ * CSS styling for "Item Catalog" project
+ * written by J K Thomson, 28 January 2019
+ */
+body,th,p{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 18px;
+	color: #333;
+	line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+	background-color: #333;
+	margin: 0;
+	position:relative;
+	max-width: 1000px;
+	min-width: 320px;
+}
+
+ul {
+  margin-top: 5px;
+}
+
+p {
+  margin: 0 0 20px 0;
+}
+
+a, a:hover, a:focus, a:visited {
+	color: #3397db;
+	text-decoration: none;
+}
+
+a.selected {
+  color: orange;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+
+main {
+  background-color: #fff;
+  min-height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20px 30px;
+}
+
+footer {
+  width: auto;
+  background-color: #3397db;
+  color: #ccc;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 25px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+nav {
+  display: inline-block;
+  width: 100%;
+}
+
+nav h2 {
+  color: #bbb;
+  font-style: italic;
+  text-transform: uppercase;
+}
+
+article, form {
+  display: inline-block;
+  width: 100%;
+}
+
+h1 {
+  width: 100%;
+  min-width: 320px;
+  height: 80px;
+  line-height: 80px;
+  background-color: #3397db;
+  text-align:center;
+  color: #fff;
+  font-weight: 200;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+h2, h3 {
+  font-size: 18px;
+}
+
+h3 {
+  margin: 0 0 10px 0;
+}
+
+label {
+  display: block;
+}
+
+input[type=button], input[type=submit] {
+  background-color: orange;
+  border: none;
+  color: white;
+  padding: 12px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  font-size: 20px;
+  cursor: pointer;
+  min-width: 130px;
+}
+
+input[type=text], textarea {
+  font-size: 16px;
+  width: 90%;
+}
+
+input[type=radio] {
+  margin:  0 10px 0 20px;
+}
+
+.status-bar, .login, .back-arrow {
+  background-color: #dedeff;
+}
+
+.status-bar {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px 30px;
+}
+
+.login, .back-arrow {
+  display: inline-block;
+  color: #aaa;
+}
+
+.back-arrow {
+  width: 20%;
+}
+
+.login div span {
+  padding-left: 10px;
+}
+
+.login {
+  text-align: right;
+  width: 80%;
+}
+
+#login-status {
+  visibility: hidden;
+}
+
+.post-error {
+  font-weight: 700;
+  color: red;
+}
+
+/* the following css shows the picture caption when you mouse over an iamge
+ * it was modfied from this stackoverflow post:
+ * https://stackoverflow.com/questions/35408661/animated-figcaption-overlay-deriving-width-from-image
+ */
+figure {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  margin: 10px 0;
+  padding: 0;
+}
+
+figure img {
+  display: block;
+  margin: 0;
+  max-height: 320px;
+  width: auto;
+  max-width: 100%;
+}
+
+figcaption {
+  position: absolute;
+  background: rgba(0, 0, 0, .5);
+  color: #fff;
+  padding: 4px;
+  font-size: 14px;
+  opacity: 0;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  transform: translateY(0%);
+  transition: all .75s ease;
+}
+
+figure:hover figcaption {
+  opacity: 1;
+  transform: translateY(-100%);
+}
+/* ====================== Media Queries ====================== */
+@media only screen and (min-width: 640px) {
+  nav {
+    width: 30%;
+  }
+  article, form {
+    width: calc(70% - 20px);
+    padding-left: 20px;
+  }
+}
+
+@media only screen and (min-width: 1000px) {
+  body {
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 26px;
+  }
+}

@@ -1,0 +1,59 @@
+<!--
+	layout.py
+	basic site layout template for "Item Catalog" Project
+	the real screens all derive from this one
+	written by J K Thomson, 26 January 2019
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+	<!-- scripts for google plus sign-in -->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	<script src="//apis.google.com/js/platform.js?onload=start"> </script>
+</head>
+
+<body>
+	<header>
+		<h1>The Symphony Orchestra</h1>
+
+		<section class="status-bar">
+
+			<!-- "back" button is handled by individual screens -->
+		    {% block back %}
+			<div class="back-arrow"></div>
+			{% endblock %}
+
+			<!-- "login" button is handled here for all screens -->
+			<div class="login">
+				{% if user_email %}
+				<div>
+					<span>You are logged in as {{user_email}}</span>
+					<span><a href="{{ url_for('gdisconnect')}}">Log out</a></span>
+				</div>
+				{% else %}
+				<div>
+					<span><a href="{{ url_for('showLogin')}}">Log in</a></span>
+				</div>
+				{% endif %}
+			</div>
+		</section>
+	</header>
+
+	<main>
+		<!-- main content area is filled in by individual screens -->
+		{% block main %}
+		{% endblock %}
+	</main>
+
+	<footer>
+		Copyright &copy; 2019 by J. Keith Thomson
+	</footer>
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+<!--
+    showinstrument.py
+    item details screen template for "Item Catalog" Project
+    written by J K Thomson, 24 January 2019
+-->
+{% extends "layout.html" %}
+
+{% block back %}
+<div class="back-arrow">
+    <a href="{{url_for( 'showCategory', category_id=category.id)}}"> < Back</a>
+</div>
+{% endblock %}
+
+{% block main %}
+<nav>
+    <h2>Instrument Details</h2>
+</nav>
+
+<article>
+	<h2>{{instrument.name}} ({{category.name}})</h2>
+
+	<figure>
+		<img src="{{instrument.picture_url}}" alt="{{instrument.name}}">
+        <figcaption>{{instrument.picture_attr}}</figcaption>
+    </figure>
+
+    <p>{{instrument.description}}</p>
+
+    {% if user_is_owner %}
+    <p>
+        <a href="{{url_for( 'editInstrument', category_id=category.id, instrument_id=instrument.id)}}">Edit</a> |
+        <a href="{{url_for( 'deleteInstrument', category_id=category.id, instrument_id=instrument.id)}}">Delete</a>
+    </p>
+    {% endif %}
+</article>
+
+{% endblock %}

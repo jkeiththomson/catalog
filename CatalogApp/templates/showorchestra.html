@@ -1,0 +1,37 @@
+<!--
+	showorchestra.py
+	home screen template for "Item Catalog" Project
+	written by J K Thomson, 24 January 2019
+-->
+{% extends "layout.html" %}
+
+{% block main %}
+
+<nav>
+	<h2>Orchestra Sections</h2>
+	<ul>
+		{% if categories %}
+			{% for c in categories %}
+				<li>
+					<a href="{{url_for( 'showCategory', category_id=c.id)}}">{{c.name}}</a>
+				</li>
+			{% endfor %}
+		{% else %}
+			<li>No categories in list!</li>
+		{% endif %}
+	</ul>
+	<p>Select a section!</p>
+</nav>
+
+<article>
+	<figure>
+		<img class="hero" src="https://c2.staticflickr.com/4/3442/5834658432_02a499b10d_b.jpg" alt="orchestra">
+		<figcaption>Photo of Vancouver Symphony Orchestra by "Vancouver 125 - The City of Vancouver" on Flickr</figcaption>
+	</figure>
+
+	<p>This website shows some of the musical instruments that make up a modern symphony orchestra.</p>
+	<p>All of the information about each instrument is stored in a SQLite database on the server. If you log into this website with your Google Plus credentials, you can add, modify and delete the instruments in the database.</p>
+	<p>Choose a section from the list on the left to see the instruments in that section.</p>
+</article>
+
+{% endblock %}

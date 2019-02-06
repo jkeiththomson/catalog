@@ -1,0 +1,24 @@
+{
+  "Categories": [
+    {
+      "description": "Woodwind instruments are a family of musical instruments within the more general category of wind instruments. There are two main types of woodwind instruments: flutes and reed instruments (otherwise called reed pipes). What differentiates these instruments from other wind instruments is the way in which they produce their sound.All woodwinds produce sound by splitting an exhaled air stream on a sharp edge, such as a reed or a fipple. A woodwind may be made of any material, not just wood. Common examples include brass, silver, cane, as well as other metals such as gold and platinum. Occasionally woodwinds are made out of earthen materials, especially ocarinas. Common examples include flute, oboe, clarinet, bassoon, and saxophone. [wikipedia.org]",
+      "id": 1,
+      "name": "Woodwinds"
+    },
+    {
+      "description": "A brass instrument is a musical instrument that produces sound by sympathetic vibration of air in a tubular resonator in sympathy with the vibration of the lips. Brass instruments are also called labrosones, literally meaning \"lip-vibrated instruments\". There are several factors involved in producing different pitches on a brass instrument. Slides, valves, crooks (though they are rarely used today), or keys are used to change vibratory length of tubing, thus changing the available harmonic series, while the embouchure, lip tension and air flow serve to select the specific harmonic produced from the available series. The view of most scholars is that the term \"brass instrument\" should be defined by the way the sound is made, as above, and not by whether the instrument is actually made of brass. Thus one finds brass instruments made of wood, like the alphorn, the cornett, the serpent and the didgeridoo, while some woodwind instruments are made of brass, like the saxophone.  [wikipedia.org]",
+      "id": 2,
+      "name": "Brass"
+    },
+    {
+      "description": "String instruments, stringed instruments, or chordophones are musical instruments that produce sound from vibrating strings when the performer plays or sounds the strings in some manner. Musicians play some string instruments by plucking the strings with their fingers or a plectrum -- and others by hitting the strings with a light wooden hammer or by rubbing the strings with a bow. In some keyboard instruments, such as the harpsichord, the musician presses a key that plucks the string. With bowed instruments, the player rubs the strings with a horsehair bow, causing them to vibrate. With a hurdy-gurdy, the musician operates a mechanical wheel that rubs the strings. [wikipedia.org]",
+      "id": 3,
+      "name": "Strings"
+    },
+    {
+      "description": "A percussion instrument is a musical instrument that is sounded by being struck or scraped by a beater (including attached or enclosed beaters or rattles); struck, scraped or rubbed by hand; or struck against another similar instrument. The percussion family is believed to include the oldest musical instruments, following the human voice. The percussion section of an orchestra most commonly contains instruments such as timpani, snare drum, bass drum, cymbals, triangle and tambourine. However, the section can also contain non-percussive instruments, such as whistles and sirens, or a blown conch shell. [wikipedia.org]",
+      "id": 4,
+      "name": "Percussion"
+    }
+  ]
+}

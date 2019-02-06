@@ -1,0 +1,27 @@
+<!--
+	deleteinstrument.py
+	item deletion screen template for "Item Catalog" Project
+	written by J K Thomson, 24 January 2019
+-->
+{% extends "layout.html" %}
+
+{% block back %}
+<div class="back-arrow">
+    <a href="{{url_for('showInstrument', category_id=item.category_id, instrument_id=item.id)}}"> < Back</a>
+</div>
+{% endblock %}
+
+{% block main %}
+<nav>
+    <h2>Delete Instrument</h2>
+</nav>
+
+<form action="{{ url_for('deleteInstrument', category_id=item.category_id, instrument_id=item.id)}}" method='post'>		<h2> Delete {{item.name}}? </h2>
+
+	<p>Are you sure you want to delete {{item.name}}?</p>
+
+	<input type='submit', value='Delete'>
+	<input type='button', value='Cancel',
+		onclick="window,location.href='{{url_for('showInstrument', category_id=item.category_id, instrument_id=item.id)}}' ">
+</form>
+{% endblock %}
