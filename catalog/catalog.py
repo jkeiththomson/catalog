@@ -1,4 +1,4 @@
-# application.py
+# catalog.py
 # main application for "Item Catalog" Project
 # written by J K Thomson, 24 January 2019
 import random
@@ -452,7 +452,7 @@ def userJSON(user_id):
     return jsonify(User=user_id.serialize)
 
 
-if __name__ == '__main__':
-    app.secret_key = 'a_really_really_secret_key'
-    app.debug = True
-    app.run(host='0.0.0.0', port=5000)
+# if __name__ == '__main__':
+#     app.secret_key = 'a_really_really_secret_key'
+#     app.debug = True
+#     app.run(host='0.0.0.0', port=5000)

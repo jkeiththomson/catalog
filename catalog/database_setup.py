@@ -78,12 +78,15 @@ class User(Base):
 
 
 # create the database
-engine = create_engine(
-    'sqlite:///orchestra.db',
-    connect_args={'check_same_thread': False})
+engine = create_engine('postgresql://postgres@localhost/orchestra')
+
+
+# engine = create_engine(
+#     'sqlite:///orchestra.db',
+#     connect_args={'check_same_thread': False})
 
 # create the tables
-Base.metadata.drop_all(engine)
+# Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)
 
 # prepare to load the data
