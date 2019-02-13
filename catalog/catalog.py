@@ -18,6 +18,7 @@ from flask import session as login_session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy_utils import database_exists, create_database
 from database_setup import Base, Category, Instrument, User
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
@@ -25,12 +26,13 @@ from oauth2client.client import FlowExchangeError
 app = Flask(__name__)
 
 CLIENT_ID = json.loads(
-    open('client_secrets.json', 'r').read())['web']['client_id']
+    open('/var/www/catalog/catalog/client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Catalog"
 
-engine = create_engine(
-    'sqlite:///orchestra.db',
-    connect_args={'check_same_thread': False})
+engine = create_engine('postgresql://ubuntu:udacity@localhost/orchestra')
+if not database_exists(engine.url):
+    print 'database orchestra not found'
+
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -452,7 +454,7 @@ def userJSON(user_id):
     return jsonify(User=user_id.serialize)
 
 
-# if __name__ == '__main__':
-#     app.secret_key = 'a_really_really_secret_key'
-#     app.debug = True
-#     app.run(host='0.0.0.0', port=5000)
+if __name__ == '__main__':
+    app.secret_key = 'a_really_really_secret_key'
+    app.debug = True
+    app.run(host='0.0.0.0', port=5000)
