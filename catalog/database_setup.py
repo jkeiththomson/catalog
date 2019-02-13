@@ -8,6 +8,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
+from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
@@ -77,53 +78,65 @@ class User(Base):
         }
 
 
-# create the database
-engine = create_engine('postgresql://postgres@localhost/orchestra')
+
+# create the database if necessary and initialize tables
+def init_db():
+
+    # attempt to connect to the database
+    engine = create_engine('postgresql://ubuntu:udacity@localhost/orchestra')
+
+    # if database doesn't exist, create it
+    if not database_exists(engine.url):
+        create_database(engine.url)
+    # if database exists, clear the tables
+    else:
+        Base.metadata.drop_all(engine)
+
+    # create the tables
+    Base.metadata.create_all(engine)
+
+    # prepare to load the data
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+
+    # create "user 1", the "creator" of the built-in instruments
+    user1 = User(name="System Administrator",
+                 email="admin@orchestra_catalog.com",
+                 picture="")
+    session.add(user1) 
+    session.commit
+
+    # get the category data from JSON file
+    with open('database_categories.json') as cat_file:
+        cat_data = json.load(cat_file)
+        cats = cat_data["Categories"]
+        for c in cats:
+            category = Category(name=c["name"],
+                                description=c["description"])
+            session.add(category)
+            session.commit()
+
+    # get the instrument data from JSON file
+    with open('database_instruments.json') as inst_file:
+        inst_data = json.load(inst_file)
+        insts = inst_data["Instruments"]
+        for i in insts:
+            # create a new instrument object from JSON data
+            instrument = Instrument(name=i["name"],
+                                    description=i["description"],
+                                    category_id=i["category_id"],
+                                    picture_url=i["picture_url"],
+                                    picture_attr=i["picture_attr"],
+                                    user_id=user1.id)
+            session.add(instrument)
+            session.commit()
+
+    # finish up
+    print "orchestra.db has been set up!"
 
 
-# engine = create_engine(
-#     'sqlite:///orchestra.db',
-#     connect_args={'check_same_thread': False})
+# MAIN APP
+# run this python script if this is the main module
+if __name__ == '__main__':
+    init_db()
 
-# create the tables
-# Base.metadata.drop_all(engine)
-Base.metadata.create_all(engine)
-
-# prepare to load the data
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
-
-# create "user 1", the "creator" of the built-in instruments
-user1 = User(name="System Administrator",
-             email="admin@orchestra_catalog.com",
-             picture="")
-session.add(user1)
-session.commit
-
-# get the category data from JSON file
-with open('database_categories.json') as cat_file:
-    cat_data = json.load(cat_file)
-    cats = cat_data["Categories"]
-    for c in cats:
-        category = Category(name=c["name"],
-                            description=c["description"])
-        session.add(category)
-        session.commit()
-
-# get the instrument data from JSON file
-with open('database_instruments.json') as inst_file:
-    inst_data = json.load(inst_file)
-    insts = inst_data["Instruments"]
-    for i in insts:
-        # create a new instrument object from JSON data
-        instrument = Instrument(name=i["name"],
-                                description=i["description"],
-                                category_id=i["category_id"],
-                                picture_url=i["picture_url"],
-                                picture_attr=i["picture_attr"],
-                                user_id=user1.id)
-        session.add(instrument)
-        session.commit()
-
-# finish up
-print "orchestra.db has been set up!"
