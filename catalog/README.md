@@ -10,186 +10,371 @@
 
 This is my solution to the "Configure Linux Server" project from Udacity's "Full Stack Web Developer" nanodegree course.
 
-Here are the steps I took to convert the "Item Catalog" project from a locally-hosted debug app using a SQLite database to a real webapp running on an Apache server in the cloud using a PosgreSQL database.
+Here are the steps I took to convert the "Item Catalog" project from a locally-hosted, debug website using a SQLite database to a real website running on an Apache server in the cloud using a PosgreSQL database.
 
-### Set up an Apache server on AWS with SSH keys for 2 users
+### 1. Create SSH key pairs for two Ubuntu users
 
-#### create an SSH key pair for the user `ubuntu`
+#### a. Create an SSH key pair for the user `ubuntu`:
 
-- in Mac OS X Terminal app:
-  - `cd ~`
-  - `ssh-keygen`
-  - name the files `ubuntu_key`, no passphrase
-  - the two files are stored in `~ (/Users/keith)`
+In Mac OS X Terminal app:
+- `cd ~`
+- `ssh-keygen`
+- Name the files `ubuntu_key`, no passphrase
+- The two files are stored in `~ (/Users/keith)`
 
-#### create an SSH key pair for the user `grader`
+#### b. Create an SSH key pair for the user `grader`:
 
-- follow previous step
-- name the files `grader_key`
+In Mac OS X Terminal app:
+- Follow previous step
+- Name the files `grader_key`
 
-### Create an instance of Ubuntu on an AWS server
+### 2. Create an instance of Ubuntu on an AWS server
 
+#### a. Create the instance using Amazon Web Services
+
+On AWS website:
+- In a browser, navigate to https://aws.amazon.com/
 - Create an AWS account or sign into an existing one
 - Create a new Lightsail image
-- Pick Platform=Linux, Blueprint=OS only/Ubuntu 16.04
-- When it asks about ssh key pair, upload ubuntu_key.pub
-- Choose the cheapest instance plan
-- Accept the default name in "Identify your Instance"
-- CREATE INSTANCE
-- When the instance has been created, connect to it using the web-based terminal on AWS website
+- Choose these options:
+  - Instance location=Oregon Zone A
+  - Platform=Linux/Unix
+  - Blueprint=OS only/Ubuntu 16.04
+  - SSH key pair: upload `ubuntu_key.pub` you made earlier
+  - Instance plan=cheapest
+  - Identify your instance=use the default name
+- CREATE THE INSTANCE
+- After the instance finishes being created (i.e. state goes rom Pendingto Running):
+  - Select the instance by clicking its name
+  - Click "Connect using SSH"
 - Note the public and private IP addesses:
-  - Private IP: 172.26.6.50
-  - Public IP: 34.220.98.225
+  - Private IP: 172.26.4.214
+  - Public IP: 34.215.182.60
 
-### Get the server software up-to-date
+#### b. Get OS software up tp date
 
-Connect to Ubuntu using the web-based Terminal app:
+You should already be connected to Ubuntu image using the web-based terminal
+
+In web-based terminal:
 - Update package lists, upgrade any apps that need it
-  - sudo apt-get update
-  - sudo apt-get upgrade
+  - `sudo apt-get update`
+  - `sudo apt-get upgrade`
     - when prompted, type y
-    - if you get the pink screen about /tmp/grub, hit enter
-  - sudo apt-get autoremove
+    - if you get the pink screen about /tmp/grub, hit Enter
+  - `sudo apt-get autoremove`
 - Install finger and test it
-  - sudo apt-get install finger
-  - finger
-- log out of web browser ssh connection
+  - `sudo apt-get install finger`
+  - `finger`
 
-https://github.com/bcko/Ud-FS-LinuxServerConfig-LightSail
+#### c. Set time zone to UTC
 
-Note: the next few sections are informed by a post by Brian B in the
-Udacity forums
-https://knowledge.udacity.com/questions/17016
-and an article on rackspace.com:
-https://support.rackspace.com/how-to/logging-in-with-an-ssh-private-key-on-linuxmac/
+On Ubuntu terminal:
+- `sudo dpkg-reconfigure tzdata`
+  - Select "None of the above"
+  - Select "UTC"
+- Log out of web browser SSH connection (Ctrl+D)
 
-### ssh into the Linux box from the Mac's Terminal app using Port 22
+### 3. Set up SSH logins for our two users
 
-- On local Mac terminal:
-  - find the private key file (ubuntu_key) that you created before (it should be in /Users/keith folder on Mac)
-  - copy ubuntu and grader keys to .ssh on local machine
-    - cp ~/ubuntu* ~/.ssh
-    - cp ~/grader* ~/.ssh
-  - chmod 600 ~/.ssh/ubuntu_key
-  - chmod 600 ~/.ssh/grader_key
-  - ssh -i ~/.ssh/ubuntu_key ubuntu@34.220.4.98.225
-  - when it asks if it's ok to connect, type yes
-  - You should now be logged into the Linux box
+#### a. Set up user `ubuntu`
 
-### Enable port 2200 for ssh
+On local Mac terminal:
+- Find the private key file (`ubuntu_key`) that you created before (it should be in `/Users/<username>` folder on Mac)
+- Copy `ubuntu` and `grader` keys to `.ssh` on local machine
+  - `cp ~/ubuntu* ~/.ssh`
+  - `cp ~/grader* ~/.ssh`
+- `chmod 600 ~/.ssh/ubuntu_key`
+- `chmod 600 ~/.ssh/grader_key`
+- `ssh -i ~/.ssh/ubuntu_key ubuntu@34.215.182.60`
+- When it asks if it's ok to connect, type yes
+You should now be logged into the Linux box
 
-- In ubuntu terminal, edit config file
-  - sudo nano /etc/ssh/sshd_config
-  - add Port 2200 below Port 22 (don't delete port 22 yet)
-  - write file and exit (Ctrl+O, Enter, Ctrl+X)
+#### b. Set up user `grader` and give them sudo privileges
 
-### Configure the server's firewall
+On Ubuntu terminal:
+- `sudo adduser grader`
+  - set pw to "fullstack"
+  - set fullname to "Udacity Grader"
+  - just hit Enter for the rest of the parameters
+- `finger grader` # to confirm
+- Give them sudo privileges
+  - `sudo usermod -aG sudo grader`
 
-- On Ubuntu terminal:
-  - sudo ufw status					# should be "inactive"
-  - sudo ufw default deny incoming	# deny access to all inbound ports
-  - sudo ufw default allow outgoing # allow all outbound ports
-  - sudo ufw allow 2200/tcp			# allow ssh on port 2200
-  - sudo ufw allow www	  			# allow www on port 80
-  - sudo ufw allow              # allow ntp on port 123
-  - sudo ufw enable
-  - sudo ufw status
+#### c. Set up ssh key pair for "grader"
 
-### log into port 2200 on Ubuntu server
+On Ubuntu terminal:
+  - `sudo su - grader`
+  - `mkdir .ssh`
+  - `chmod 700 .ssh`
+  - `touch .ssh/authorized_keys`
+  - `chmod 600 .ssh/authorized_keys`
 
-  - Ctrl+D to log out of server
-  - reboot server using button on AWS website
-  - check firewall settings on website (Networking tab)
-    - if there's no port 2200 create one (Custom, TCP)
-    - if there's no port 123 create one (Custom, TCP)
-    - if there IS a poudo
-    rt 22, delete it
-  - ssh -i ~/.ssh/ubuntu_key ubuntu@34.220.4.56 -p 2200
-  - remove "Port 22" from sshd_config:
-    - sudo nano /etc/ssh/sshd_config
-
-### Add a user named "grader" and give them sudo privileges
-
-  On Ubuntu terminal:
-  - sudo adduser grader
-    - set pw to "fullstack"
-    - set fullname to "Udacity Grader"
-  - finger grader # to confirm
-
-https://linuxize.com/post/how-to-create-a-sudo-user-on-ubuntu/
-  - sudo usermod -aG sudo grader
-
-### setup ssh key pair for "grader"
-
-  - On Ubuntu terminal:
-    - sudo su - grader
-    - mkdir .ssh
-    - chmod 700 .ssh
-    - touch .ssh/authorized_keys
-    - chmod 600 .ssh/authorized_keys
-
-  - Open a local terminal on Mac:
-    - cat /Users/keith/.ssh/grader_key.pub
-    - select and copy the key, which looks like this:
-
-Anoterh try:
-https://superuser.com/questions/1221476/how-do-i-add-new-user-accounts-with-ssh-access-to-my-amazon-ec2-linux-instance
-
-
+Open a local terminal on Mac:
+  - `cat /Users/<username>/.ssh/grader_key.pub`
+  - Select and copy the key, which looks like this:
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTvTnCzaaIPChWXgvxlyswcNzzTjlYUcfNExm6zGGJRtEcjvHMpV6vg9XMOb9ZgRNhgpWQqitQ9yLy+mjznDerfuK9RsEIdu5wb7uVFXs6TGHy8b9sqid0PH6PYuWiZ1/pA6cRrtQudeqlZuVV5wyimPFKZONW3v+BOp+AtIvChPhZI+rWn0T3vxi2NTHfdqW93VqsQ7ReEkzd1RGxJZ+1X0kADmCJKjwAoju0DvvVz3/xdsc2UT3rjRsUTxDR1bH4GBQr7U1pwCGAqZqvEl72TLpUdWRECG42qIPsut95c237gtzkwlU7iAOeiPWJduMV/bPxXnrB/YqF+XwRMuiz testuser@testEC2
 
-
 On Ubuntu terminal
-  - edit this file and paste in the key:
-    - nano ~/.ssh/authorized_keys
-  - paste the copied key into this file
-  log out (Ctrl+D)
-  Log into grader account:
-  - ssh -i ~/.ssh/grader_key grader@34.220.98.225
-   -p 2200
-  -- verify it owrks
-  - log out
+- Edit the authorized keys file:
+  - `nano ~/.ssh/authorized_keys`
+- Paste the copied key into the file and save it
+  - Ctrl+O, Enter, Ctrl+X
+- Log out (Ctrl+D, Ctrl+D)
+Log into grader account:
+- ssh -i ~/.ssh/grader_key grader@34.215.182.60
+- verify it works
+- log out
 
-### Prevent users from logging in with passwords
-  - log into ubuntu account
-    - ssh -i ~/.ssh/ubuntu_key ubuntu@34.220.98.225 -p 2200
-  - sudo nano /etc/ssh/sshd_config
-  - change "PasswordAuthentication" value to "no"
-  - sudo service ssh restart
-  [this is arleady done by Windsail]
+### 4. Set up ports and firewall for Ubuntu
 
-### Prevent users from logging in as root
-  - sudo nano /etc/ssh/sshd_config
-  - change "PermitRootLogin" to "probinit-passeword" (already done in Ubuntu so we don't have to)
-  - sudo service ssh restart
-  [this is arleady done by Windsail]
+#### e. Enable port 2200 for ssh
 
-### Change timezone to UTC
-sudo dpkg-reconfigure tzdata
+On Ubuntu terminal, edit config file:
+- `sudo nano /etc/ssh/sshd_config`
+- Add Port 2200 below Port 22 (don't delete port 22 yet)
+- Write file and exit (Ctrl+O, Enter, Ctrl+X)
 
-### set up a test mod_wagi project
+#### b. Configure the server's firewall
 
-### Install Apache
+On Ubuntu terminal:
+- `sudo ufw status`					        # should be "inactive"
+- `sudo ufw default deny incoming`	# deny access to all inbound ports
+- `sudo ufw default allow outgoing` # allow all outbound ports
+- `sudo ufw allow 2200/tcp`	    		# allow ssh on port 2200
+- `sudo ufw allow www`	  			    # allow www on port 80
+- `sudo ufw allow ntp`                  # allow ntp on port 123
+- `sudo ufw enable`                 # enable firewall
+- `sudo ufw status`                 # recheck status
 
-  - On Ubuntu terminal:
-    - sudo apt-get update
-    - sudo apt-get install apache2
-    - set a flag to superess a warning:
-      - sudo nano /etc/apache2/apache2.conf
-      - add a line to bottom of file:
-      ServerName server_domain_or_IP
-    - check fors syntax errors
-      - sudo apache2ctl configtest  # syntax OK
-    - restart Apache
-      - sudo systemctl restart apache2
+#### c. Log into port 2200 on Ubuntu server
+
+On Ubuntu terminal:
+- Ctrl+D to log out of server
+- Reboot server using button on AWS website
+- Check firewall settings on AWS website (Networking tab)
+  - if there's no port 2200 create one (Custom, TCP)
+  - if there's no port 123 create one (Custom, TCP)
+  - if there IS a port 22, delete it
+  - Click Save
+- `ssh -i ~/.ssh/ubuntu_key ubuntu@34.220.4.56 -p 2200`
+- Remove "Port 22" from sshd_config:
+  - `sudo nano /etc/ssh/sshd_config`
+
+### 5. Set up some security precautions in Ubuntu
+
+#### a. Prevent users from logging in with passwords
+
+On Ubuntu terminal:
+- Log into ubuntu account
+  - `ssh -i ~/.ssh/ubuntu_key ubuntu@34.220.98.225 -p 2200`
+- `sudo nano /etc/ssh/sshd_config`
+- Change `PasswordAuthentication` value to `no`
+- `sudo service ssh restart`
+[this is already done by Windsail]
+
+#### b. Prevent users from logging in as root
+
+On Ubuntu terminal:
+- `sudo nano /etc/ssh/sshd_config`
+- Change `PermitRootLogin` value to `probinit-password`
+- 'sudo service ssh restart'
+[this is already done by Windsail]
+
+### 6. Install all the software we will need
+
+#### a. Install Apache
+
+On Ubuntu terminal:
+- `sudo apt-get update`
+- `sudo apt-get install apache2`
+- Set a flag to supress a warning:
+  - `sudo nano /etc/apache2/apache2.conf`
+  - add a line to bottom of file:
+    - `ServerName <server_domain_or_IP>`
+- Check for syntax errors
+  - `sudo apache2ctl configtest`  # syntax OK
+- Restart Apache
+  - `sudo systemctl restart apache2`
   [firewall config?]
-    - check IP address in browser
-    - should see Apache/Ubuntu test page
+- check IP address in browser
+  - sudo service apache2 restart
+  - sudo apachectl restart
+  - test, with a browser, by boing to 34.215.182.60
+  - should see Apache2 Ubuntu Default Page
 
-### Install end enable mod_wsgi
+#### b. Install Python 2.7
 
-  - sudo apt-get install libapache2-mod-wsgi python-dev
-  - sudo a2enmod wsgi  # already enabled
+On Ubuntu terminal:
+- sudo apt-get install python
+- sudo apt-get install python-pip
+- sudo apt-get install python-httplib2
+- sudo apt-get install python-requests
+FOO - sudo apt-get install python-h2client
+
+#### c. Install sqlalchemy
+
+On Ubuntu terminal:
+- sudo apt-get install python-sqlalchemy
+- sudo pip install sqlachemy_utils
+
+#### d. Install Flask
+
+On Ubuntu terminal:
+- `sudo apt-get install python-flask`
+
+FOO Test Flask installation
+  - 'sudo python __init__.py'
+  - Console should say “Running on http://localhost:5000/” or "Running on http://127.0.0.1:5000/"
+
+#### e. Install mod_wsgi
+
+On Ubuntu terminal:
+  - `sudo apt-get install libapache2-mod-wsgi python-dev`
+  - `sudo a2enmod wsgi`  # should say "already enabled"
+
+#### f. Install Git
+
+On Ubuntu terminal:
+- `sudo apt-get install git-core`
+- `git config --global user.name "J Keith Thomson"`
+- `git config --global user.email "jkthomson@gmail.com"`
+
+#### g. Install postgresql
+
+On Ubunto terminal:
+- `sudo apt-get update`
+- `sudo apt-get install python-pip python-dev libpq-dev postgresql postgresql-contrib`
+- `sudo pip install psycopg2-binary`
+
+### 7. Get and deploy web app code
+
+#### a. Get code from Github
+
+On Ubuntu terminal:
+- `cd /var/www`
+- `sudo git clone https://jkeiththomson@github.com/jkeiththomson/catalog.git`
+
+#### b. Set up configuration file for Flask project
+
+On Ubuntu terminal:
+- Edit the config file
+  - `sudo nano /etc/apache2/sites-available/catalog.conf`
+- Paste this code into that file:
+
+```
+<VirtualHost *:80>
+    ServerName 34.215.182.60
+    ServerAdmin admin@mywebsite.com
+    WSGIScriptAlias / /var/www/catalog/catalog.wsgi
+    <Directory /var/www/catalog/catalog/>
+        Order allow,deny
+        Allow from all
+    </Directory>
+    Alias /static /var/www/catalog/catalog/static
+    <Directory /var/www/catalog/catalog/static/>
+        Order allow,deny
+        Allow from all
+    </Directory>
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    LogLevel warn
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+- Save and close the file
+
+#### d. Update the webapp to use PostGreSQL instead of SQL_Lite
+
+Note: these changes were made already and merged into Git, so they don't need to be done now. They are listed only for completeness.
+
+On Ubuntu terminal,
+- Edit `__init__.py`
+  - `cd /var/www/catalog/catalog`
+  - `sudo nano __init__.py`
+  - Verify that there is no code in this file, only a comment
+- Edit `catalog.py`
+  - `sudo nano catalog.py`
+  - Verify that the `create_engine` code has been converted to postgresql:
+    - engine = create_engine('postgresql://ubuntu:udacity@localhost/orchestra')
+- Edit `catalog.wsgi`
+  - `sudo nano ../catalog.wsgi`
+  - Verify that the code in this file looks like this:
+```
+import sys
+import logging
+logging.basicConfig(stream=sys.stderr)
+sys.path.insert(0,"/var/www/catalog/")
+
+from catalog import catalog
+application = catalog.app
+
+```
+#### e. Set up database users
+
+On Ubuntu terminal:
+- `sodu su - postgres`
+- `createuser --interactive --pwprompt`
+  - Name of role: ubuntu
+  - Password: udacity
+  - Superuser? y
+- `createuser --interactive --pwprommpt`
+  - Name: catalog
+  - Password: udacity
+  - Superuser: no
+  - Create Dbs: no
+  - Create roles: no
+
+#### e. Initialize the database
+
+On Ubuntu terminal,
+-  `cd/var/www/catalog/catalog`
+- `sudo python database_setup.py`
+  - Console should respond with "orchestra database has been set up"
+- Verify that database is there:
+  - `psql orchestra`
+    - `\du`  # lists the users
+    - `/d`   # lists the tables
+
+### 8. Enable the new web app
+
+#### a. Disable default app and enable our catalog app
+
+On Ubuntu terminal:
+- Enable the virtual host with the following command:
+  - `sudo a2ensite catalog`
+- Disable the default Apache site
+  - `sudo a2dissite 000-default`
+- Reload the server
+  - `sudo service apache2 reload`
+
+#### b. Test that web app is working
+
+On Mac OS X:
+- Fire up a browser (I used Chrome)
+- Navigate to http://34.215.182.60
+- Verify that the web app works
+
+
+
+
+
+<!--   install virtual environment
+  - sudo pip install virtualenv
+  Give the following command (where venv is the name you would like to give your temporary environment):
+  - sudo virtualenv venv
+  Now, install Flask in that environment by activating the virtual environment with the following command:
+  - source venv/bin/activate
+ -->
+
+To deactivate the environment, give the following command:
+  - deactivate
+
+
+????????????????????????????????????????????????????????
+Edit
+/etc/hosts
+ on your computer and add this line to the bottom:
+34.220.4.56 flaskapp.dev
+??????????????????????????????????????????????????????????
 
 ### create a Flask app
 
@@ -211,66 +396,6 @@ if __name__ == "__main__":
     app.run()
 
     save and close the file
-
-*** install Flask
-
-  install pip:
-  - sudo apt-get install python-pip
-<!--   install virtual environment
-  - sudo pip install virtualenv
-  Give the following command (where venv is the name you would like to give your temporary environment):
-  - sudo virtualenv venv
-  Now, install Flask in that environment by activating the virtual environment with the following command:
-  - source venv/bin/activate
- -->  Give this command to install Flask inside:
-  - sudo apt-get install  python-flask
-
-  Next, run the following command to test if the installation is successful and the app is running:
-  - sudo python __init__.py
-It should display “Running on http://localhost:5000/” or "Running on http://127.0.0.1:5000/". If you see this message, you have successfully configured the app.
-
-To deactivate the environment, give the following command:
-  - deactivate
-
-*** Configure and Enable a New Virtual Host
-  - sudo nano /etc/apache2/sites-available/FlaskApp.conf
-
-Paste this code into that file:
-
-  <VirtualHost *:80>
-      ServerName 34.220.98.225
-      ServerAdmin admin@mywebsite.com
-      WSGIScriptAlias / /var/www/flaskapp/flaskapp.wsgi
-      <Directory /var/www/flaskapp/flaskapp/>
-        Order allow,deny
-        Allow from all
-      </Directory>
-      Alias /static /var/www/flaskApp/flaskapp/static
-      <Directory /var/www/flaskApp/flaskapp/static/>
-        Order allow,deny
-        Allow from all
-      </Directory>
-      ErrorLog ${APACHE_LOG_DIR}/error.log
-      LogLevel warn
-      CustomLog ${APACHE_LOG_DIR}/access.log combined
-  </VirtualHost>
-
-save and close the filea
-
-Enable the virtual host with the following command:
-- sudo a2ensite FlaskApp
-
-Disable the default Apache site
-- sudo a2dissite 000-default
-- sudo service apache2 reload
-
-????????????????????????????????????????????????????????
-Edit
-/etc/hosts
- on your computer and add this line to the bottom:
-34.220.4.56 flaskapp.dev
-??????????????????????????????????????????????????????????
-
 ### create the .wsgi file
 Apache uses the .wsgi file to serve the Flask app:
 - cd /var/www/flaskapp
@@ -287,16 +412,6 @@ sys.path.insert(0,"/var/www/flaskapp/")
 from flaskapp import app as application
 application.secret_key = 'Add your secret key'
 
-### restart apache
-- sudo service apache2 restart
-- sudo apachectl restart
-- test, with a browser, that 34.220.4.56 calls up a Hello page
-
-### Install git
-sudo apt-get install git-core
-git config --global user.name "J Keith Thomson"
-git config --global user.email "jkthomson@gmail.com"
-
 ### now set up a similar arrangement for the Catalog app
 - cd /var/www
 - sudo clone https://jkeiththomson@github.com/jkeiththomson/catalog.git CatalogApp
@@ -306,9 +421,6 @@ git config --global user.email "jkthomson@gmail.com"
   - sudo a2enmod wsgi
 
 ======================================
-
-### install and configure postgreSQK
-sudo apt install python-postgresql postgres-contrib python-psycopg2
 
 <!-- PotgreSGL has asuper user  naemd postgres -- siwtch ot that
 sudo su - postgres
@@ -320,26 +432,6 @@ ALTER ROLE foobar SET default_transaction_isolation TO 'read committed';
 ALTER ROLE foobar SET timezone TO 'UTC';
 GRANT ALL PRIVILEGES ON DATABASE foobar TO foo;
  -->
-https://stackoverflow.com/questions/6506578/how-to-create-a-new-database-using-sqlalchemy
-
-https://www.google.com/search?q=install+github+on+ubuntu+16.04&oq=install+github+on+ubuntu&aqs=chrome.2.69i57j0l5.13422j0j4&sourceid=chrome&ie=UTF-8
-
-http://flask.pocoo.org/docs/0.12/deploying/#deployment
-
-
-https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-16-04
-
-
-### install python and dependencies
-sudo apt-get install python
-sudo apt-get install python-pip
-sudo apt-get install python-httplib2
-sudo apt-get install python-sqlalchemy
-sudo pip install sqlachemy_utils
-sudo apt-get install python-requests
-sudo apt-get install python-flask
-sudo apt-get install python-h2client
-
 
 ### get the Catalog app from GitHub
 sudo chown -R ubuntu /var/www
@@ -373,9 +465,6 @@ ei=dit the abovre file, add
 ><>
 
 
-### create and populate the inital database
- Make ubuntu a db user
-
 
 
 ### enable my website, remove default website
@@ -386,33 +475,6 @@ sudo a2dissite 000-default.conf
 sudo a2ensite myApp.conf
 sudo service apache2 reload
 
-https://modwsgi.readthedocs.io/en/develop/user-guides/quick-configuration-guide.html
-
-*** https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
-
-*** https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu-16-04
-
-
-
-https://umar-yusuf.blogspot.com/2018/02/deploying-python-flask-web-app-on.html
-
-https://knowledge.udacity.com/questions/26808
-
-
-
-if this works, you are ready to go back to the previous steps and remove port 22 from sshd_config and from AWS firewall settings.
-
-
-https://github.com/bcko/Ud-FS-LinuxServerConfig-LightSail
-
-\du
-
-
-https://www.postgresql.org/files/documentation/pdf/9.5/postgresql-9.5-US.pdf
-
-https://knowledge.udacity.com/questions/26808
-
-https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-django-application-on-ubuntu-14-04
 
 
 - Use the xip	.io service to get a DNS name for the public IP address
@@ -473,3 +535,70 @@ There is one citation in styles.css for some css code I borrowed to show the pho
 ## Contributing
 
 This is a class project. We will not accept pull requests.
+
+
+https://github.com/bcko/Ud-FS-LinuxServerConfig-LightSail
+
+Note: the next few sections are informed by a post by Brian B in the
+Udacity forums
+https://knowledge.udacity.com/questions/17016
+and an article on rackspace.com:
+https://support.rackspace.com/how-to/logging-in-with-an-ssh-private-key-on-linuxmac/
+
+
+YES! https://linuxize.com/post/how-to-create-a-sudo-user-on-ubuntu/
+
+Anoterh try:
+https://superuser.com/questions/1221476/how-do-i-add-new-user-accounts-with-ssh-access-to-my-amazon-ec2-linux-instance
+
+https://stackoverflow.com/questions/6506578/how-to-create-a-new-database-using-sqlalchemy
+
+https://www.google.com/search?q=install+github+on+ubuntu+16.04&oq=install+github+on+ubuntu&aqs=chrome.2.69i57j0l5.13422j0j4&sourceid=chrome&ie=UTF-8
+
+http://flask.pocoo.org/docs/0.12/deploying/#deployment
+
+
+https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-16-04
+
+https://modwsgi.readthedocs.io/en/develop/user-guides/quick-configuration-guide.html
+
+*** https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
+
+*** https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu-16-04
+
+
+
+https://umar-yusuf.blogspot.com/2018/02/deploying-python-flask-web-app-on.html
+
+https://knowledge.udacity.com/questions/26808
+
+
+
+if this works, you are ready to go back to the previous steps and remove port 22 from sshd_config and from AWS firewall settings.
+
+
+https://github.com/bcko/Ud-FS-LinuxServerConfig-LightSail
+
+\du
+
+
+https://www.postgresql.org/files/documentation/pdf/9.5/postgresql-9.5-US.pdf
+
+https://knowledge.udacity.com/questions/26808
+
+YES!
+https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-django-application-on-ubuntu-14-04
+
+YES
+https://www.a2hosting.com/kb/developer-corner/postgresql/managing-postgresql-databases-and-users-from-the-command-line
+
+
+
+
+
+
+
+
+
+
+
