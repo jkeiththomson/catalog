@@ -38,7 +38,7 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-# --------------- AUTHENITCATION ----------------
+# --------------- AUTHENTICATION ----------------
 
 # LOGIN SCREEN - Create anti-forgery state token
 @app.route('/login')
@@ -48,6 +48,13 @@ def showLogin():
     login_session['state'] = state
     return render_template(
         'showlogin.html', STATE=state)
+
+
+# VERIFICATION SCREEN - Google references this page to verify that we are
+# indeed the owner of this domain
+@app.route('/google0d90a180c35418a8.html')
+def showVerification():
+    return render_template('google0d90a180c35418a8.html')
 
 # GOOGLE CONNECT - user logs in with Google+ credentials
 @app.route('/gconnect', methods=['POST'])
