@@ -69,7 +69,8 @@ def gconnect():
 
     try:
         # exchange the one-time authorization code for a credentials object
-        oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
+        oauth_flow = flow_from_clientsecrets(
+            '/var/www/catalog/catalog/client_secrets.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
@@ -337,7 +338,7 @@ def deleteInstrument(category_id, instrument_id):
         return redirect(url_for('showCategory', category_id=category_id))
     else:
         return render_template(
-            'deleteInstrument.html', user_email=umail, item=itemToDelete)
+            'deleteinstrument.html', user_email=umail, item=itemToDelete)
 
 
 # HELPER FUNCTIONS
