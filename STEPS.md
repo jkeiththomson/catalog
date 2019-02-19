@@ -216,10 +216,6 @@ On Ubuntu terminal:
 On Ubuntu terminal:
 - `sudo apt-get install python-flask`
 
-FOO Test Flask installation
-  - 'sudo python __init__.py'
-  - Console should say “Running on http://localhost:5000/” or "Running on http://127.0.0.1:5000/"
-
 #### e. Install mod_wsgi
 
 On Ubuntu terminal:
