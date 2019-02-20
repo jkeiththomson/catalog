@@ -1,4 +1,4 @@
- Linux Server Configuration
+# Linux Server Configuration
 
 ## Table of Contents
 
@@ -18,9 +18,10 @@ For those who need more detail, the file STEPS.md describes the step-by-step ins
 
 ## Addresses
 
-URL: http://incredibleduc.com
-IP Address: 18.237.175.26
-SSH Port: 2200
+- URL: http://incredibleduc.com
+- IP Address: 18.237.175.26
+- SSH Port: 2200
+- Sudo user: grader (pw="fullstack")
 
 ## Software Installed
 
