@@ -161,19 +161,18 @@ On Ubuntu terminal:
 
 On Ubuntu terminal:
 - Log into ubuntu account
-  - `ssh -i ~/.ssh/ubuntu_key ubuntu@34.220.98.225 -p 2200`
+  - `ssh -i ~/.ssh/ubuntu_key ubuntu@18.237.175.26 -p 2200`
 - `sudo nano /etc/ssh/sshd_config`
+- Change `ChallengeResponseAuthentication` value to `no`
 - Change `PasswordAuthentication` value to `no`
 - `sudo service ssh restart`
-[this is already done by Windsail]
 
 #### b. Prevent users from logging in as root
 
 On Ubuntu terminal:
 - `sudo nano /etc/ssh/sshd_config`
-- Change `PermitRootLogin` value to `prohibit-password`
+- Change `PermitRootLogin` value to `no`
 - 'sudo service ssh restart'
-[this is already done by Windsail]
 
 ### 6. Install all the software we will need
 
@@ -190,26 +189,25 @@ On Ubuntu terminal:
   - `sudo apache2ctl configtest`  # syntax OK
 - Restart Apache
   - `sudo systemctl restart apache2`
-  [firewall config?]
 - check IP address in browser
-  - sudo service apache2 restart
-  - sudo apachectl restart
-  - test, with a browser, by boing to 34.215.182.60
+  - `sudo service apache2 restart`
+  - `sudo apachectl restart`
+  - test, with a browser, by going to 18.237.175.16
   - should see Apache2 Ubuntu Default Page
 
 #### b. Install Python 2.7
 
 On Ubuntu terminal:
-- sudo apt-get install python
-- sudo apt-get install python-pip
-- sudo apt-get install python-httplib2
-- sudo apt-get install python-requests
+- `sudo apt-get install python`
+- `sudo apt-get install python-pip`
+- `sudo apt-get install python-httplib2`
+- `sudo apt-get install python-requests`
 
 #### c. Install sqlalchemy
 
 On Ubuntu terminal:
-- sudo apt-get install python-sqlalchemy
-- sudo pip install sqlachemy_utils
+- `sudo apt-get install python-sqlalchemy`
+- `sudo pip install sqlachemy_utils`
 
 #### d. Install Flask
 
@@ -329,7 +327,7 @@ On Ubuntu terminal,
 - Verify that database is there:
   - `psql orchestra`
     - `\du`  # lists the users
-    - `/d`   # lists the tables
+    - `\d`   # lists the tables
 - Ctrl+D to log out of psql
 
 ### 8. Enable the new web app

@@ -1,4 +1,4 @@
- Linux Server Configuration
+# Linux Server Configuration
 
 ## Table of Contents
 
@@ -18,9 +18,10 @@ For those who need more detail, the file STEPS.md describes the step-by-step ins
 
 ## Addresses
 
-URL: http://incredibleduc.com
-IP Address: 18.237.175.26
-SSH Port: 2200
+- URL: http://incredibleduc.com
+- IP Address: 18.237.175.26
+- SSH Port: 2200
+- Sudo user: grader (pw="fullstack")
 
 ## Software Installed
 
@@ -100,8 +101,8 @@ Note: this is a high-level description of the changes I made to the Ubuntu serve
 - Initialize the database with its default catalog items
 
 ### 8. Enable the new web app
-- Disabled the default app
-- Enabled the catalog app
+- Disable the default app
+- Enable the catalog app
 
 ### 9. Add Google+ log in to web app
 - Remove hard coded IP addresses, replace with domain name
@@ -121,6 +122,8 @@ Note: this is a high-level description of the changes I made to the Ubuntu serve
 ](https://support.rackspace.com/how-to/logging-in-with-an-ssh-private-key-on-linuxmac/)
 - [How do I add new user accounts with SSH access to my Amazon EC2 Linux instance?](https://superuser.com/questions/1221476/how-do-i-add-new-user-accounts-with-ssh-access-to-my-amazon-ec2-linux-instance)
 - [How To Create a Sudo User on Ubuntu](https://linuxize.com/post/how-to-create-a-sudo-user-on-ubuntu/)
+- [Using Putty on Windows to login Linux securely via OpenSSH](http://www.linux-sxs.org/networking/openssh.putty.html)
+- [How to disable ssh password login on Linux to increase security](https://www.cyberciti.biz/faq/how-to-disable-ssh-password-login-on-linux/)
 
 ### Apache
 
